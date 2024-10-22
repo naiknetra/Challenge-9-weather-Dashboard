@@ -53,11 +53,10 @@ class HistoryService {
   // async removeCity(id: string) {}
   async removeCity(id: string) {
     let previousSearchCities:City[] = await this.getCities()
-    let cityList : any = previousSearchCities.map(city => {
-      if(city.id !== id){
-        return city
-      }
-    })
+    let cityList : any = previousSearchCities.filter(city => city.id !== id)
+       
+      
+    
     await this.write(cityList)
     return  cityList
   }
