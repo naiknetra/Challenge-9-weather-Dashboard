@@ -34,21 +34,23 @@ class WeatherService {
     async fetchLocationData(query) {
         try {
             const response = await fetch(query)
-                .then((apiWeather) => apiWeather.json())
-                .then((apiResult => {
-                console.log(apiResult);
-                return apiResult;
-            }));
+                .then((res) => res.json());
+            //.then((apiResult => {
+            console.log(response);
+            return response[0];
+            //}))
         }
         catch (err) {
             console.log("Err", err);
+            throw err;
         }
     }
     // TODO: Create destructureLocationData method
     destructureLocationData(locationData) {
+        const { cityName, latitude, longitude, country, state } = locationData;
         const location = {
             cityName, latitude, longitude, country, state
-        } = locationData;
+        };
         return location;
     }
     // TODO: Create buildGeocodeQuery method
@@ -59,23 +61,25 @@ class WeatherService {
     }
     // TODO: Create buildWeatherQuery method
     buildWeatherQuery(coordinates) {
-        const queryURL = `${this.baseURL}/data/2.3/forecast?q=${this.cityName}&appid=${this.APIkey}`;
+        const queryURL = `${this.baseURL}/data/2.3/forecast?lat=${coordinates.latitude}&lon=${coordinates.longitude}&appid=${this.APIkey}`;
         return queryURL;
         //api.openweathermap.org/data/2.5/forecast?q={city name}&appid={API key}
     }
     // TODO: Create fetchAndDestructureLocationData method
     async fetchAndDestructureLocationData() {
         this.fetchLocationData(this.buildGeocodeQuery())
-            .then((result) => {
-            console.log("API", result);
-            return result;
-        }).then(data => {
+            // .then((result) => {
+            //   console.log("API",result)
+            //   return result
+            .then((data) => {
             this.destructureLocationData(data);
         });
+        // let coordinates: Coordinates =  await this.fetchLocationData(this.buildGeocodeQuery())
+        //return  this.destructureLocationData(coordinates)
     }
     // TODO: Create fetchWeatherData method
     async fetchWeatherData(coordinates) {
-        this.fetchLocationData(this.buildWeatherQuery())
+        this.fetchLocationData(this.buildWeatherQuery(coordinates))
             .then((result) => {
             console.log("API", result);
             return result;
